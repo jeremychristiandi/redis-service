@@ -7,11 +7,18 @@ services:
     ports:
       - "6379:6379"
 
-  redis-email-service:
-    build: ./redis-service
-    container_name: email-worker
+  mail-subscriber:
+    build: .
+    container_name: mail-subscriber
     depends_on:
       - redis
     environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      - GMAIL_HOST=smtp.gmail.com
+      - GMAIL_PORT=587
+      - GMAIL_SECURE=false
+      - GMAIL_USER=${GMAIL_USER}
+      - GMAIL_PASSWORD=${GMAIL_PASSWORD}
+      - REDIS_URL=redis://redis:6379
+    volumes:
+      - .:/app
+    command: ["node", "mailSubscriber.js"]
